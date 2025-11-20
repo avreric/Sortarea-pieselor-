@@ -1,0 +1,20 @@
+# Core AI & Deep Learning Framework 
+torch
+torchvision
+
+# Computer Vision & Image Processing 
+opencv-python
+Pillow
+
+# Data Manipulation & Math 
+numpy
+pandas
+scikit-learn
+
+# Visualization & Plotting 
+matplotlib
+seaborn
+
+# Utilities
+tqdm        # Pentru bara de progres la antrenare
+PyYAML      # Pentru citirea fisierului config.yaml
