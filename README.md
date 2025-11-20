@@ -19,7 +19,7 @@ Procesul respectă fluxul standard de Machine Learning: achiziție, analiză exp
 ## 1. Structura Repository-ului Github (versiunea Etapei 3)
 
 Structura a fost adaptată pentru un proiect de Computer Vision implementat în Python/PyTorch:
-
+'''
   Defect-Detection-ViT/
 ├── README.md              # Documentația curentă
 ├── docs/
