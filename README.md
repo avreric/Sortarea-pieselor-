@@ -573,7 +573,7 @@ Use case-uri:
 4. Benchmarking pe seturi de date externe
 """
 
-![Statemachine]  (docs/Diagrama State Machine a Întregului Sistem.png)
+![Statemachine]([docs/Diagrama State Machine a Întregului Sistem.png](https://github.com/avreric/Sortarea-pieselor-/blob/a99ae12b67910e2769234d346a5a9ed3e1226d99/docs/Diagrama%20State%20Machine%20a%20%C3%8Entregului%20Sistem.png))
 
 
 
