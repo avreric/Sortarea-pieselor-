@@ -577,6 +577,7 @@ Use case-uri:
 
 
 
+<img width="885" height="653" alt="DiagramaStateMachineaÎntreguluiSistem" src="https://github.com/user-attachments/assets/08d57d03-f251-4f3c-abc0-f455130b09ed" />
 
 
 
