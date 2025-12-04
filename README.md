@@ -573,6 +573,7 @@ Use case-uri:
 4. Benchmarking pe seturi de date externe
 """
 
+(docs/Diagrama State Machine a Întregului Sistem.png)
 
 
 
