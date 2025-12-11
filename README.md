@@ -579,5 +579,95 @@ Use case-uri:
 
 <img width="885" height="653" alt="DiagramaStateMachineaÎntreguluiSistem" src="https://github.com/user-attachments/assets/08d57d03-f251-4f3c-abc0-f455130b09ed" />
 
+#### Tabel Hiperparametri și Justificări (OBLIGATORIU - Nivel 1)
+
+Completați tabelul cu hiperparametrii folosiți și **justificați fiecare alegere**:
+
+| **Hiperparametru** | **Valoare Aleasă** | **Justificare** |
+|--------------------|-------------------|-----------------|
+|----------------|---------|-------------|
+| **Learning rate** | 0.001 | Valoare standard pentru optimizatorul Adam; permite convergență stabilă fără oscilații mari în loss. Testele preliminare au arătat că valori mai mari duc la instabilitate, iar valori mai mici încetinesc prea mult procesul de învățare. |
+| **Batch size** | 32 | Compromis bun între stabilitatea gradientului și timpul de antrenare. Batch mai mare ar consuma prea multă memorie, iar batch prea mic ar introduce zgomot mare în actualizarea gradientului. |
+| **Epoci** | 40 | Număr suficient pentru ca modelul să convergă. EarlyStopping oprește antrenarea automat când val_loss nu mai scade, prevenind overfitting-ul. |
+| **Optimizer** | Adam | Optimizator adaptiv eficient pentru CNN-uri. Ajustează automat pasul de învățare pentru fiecare parametru, ceea ce accelerează convergența și gestionează bine datele cu variabilitate vizuală. |
+| **Loss function** | Binary Crossentropy | Problema este binară (Conformă vs Defectă). BCE este funcția optimă pentru modele cu ieșire sigmoid și interpretare probabilistică. |
+| **EarlyStopping patience** | 5 | Dacă modelul nu mai îmbunătățește val_loss timp de 5 epoci, antrenarea se oprește pentru a evita overfitting-ul și timp pierdut. |
+| **ReduceLROnPlateau patience** | 2 | Scade automat rata de învățare când modelul stagnează, ajutând la fine-tuning în fazele finale ale antrenării. Previne blocarea în platouri. |
+| **Activare output** | Sigmoid | Produce o valoare între 0 și 1 interpretabilă direct ca probabilitate că piesa este defectă. Esențial pentru clasificare binară și aplicarea pragului de decizie. |
+
+**Resurse învățare rapidă:**
+Am folosit următoarele resurse pentru înțelegerea pașilor de preprocesare, antrenare și evaluare a modelului:
+- Împărțire date: https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html  
+- Video explicativ: https://youtu.be/1NjLMWSGosI  
+- Antrenare model CNN în Keras: https://keras.io/examples/vision/mnist_convnet/  
+- F1-score și metrici: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
+
+## 2. Structura datelor și pipeline
+
+Preprocesarea este gestionată de `data/importcv2.py`, care:
+
+1. Încarcă imaginile din:  
+   - `data/raw/piese conforme/`  
+   - `data/raw/piese defecte/`
+2. Convertește în grayscale  
+3. Redimensionează la **128×128**
+4. Normalizează la [0,1]
+5. Creează seturile:
+   - `data/train/train_images.npy`
+   - `data/train/train_labels.npy`
+   - `data/validation/validation_images.npy`
+   - `data/validation/validation_labels.npy`
+   - `data/test/test_images.npy`
+   - `data/test/test_labels.npy`
+
+Împărțirea datelor:  
+- **70% train**, **20% validation**, **10% test**
+
+---
+
+## 3. Arhitectura modelului
+
+Model CNN Keras:
+
+- Conv2D 32 + ReLU  
+- MaxPooling  
+- Conv2D 64  
+- MaxPooling  
+- Conv2D 128  
+- MaxPooling  
+- Flatten  
+- Dense 128 + ReLU  
+- Dropout 0.5  
+- Dense 1 + Sigmoid
+
+## Verificare Consistență cu State Machine (Etapa 4)
+
+Fluxul implementat în Etapa 5 respectă State Machine-ul definit anterior în Etapa 4 pentru procesul de **inspecție vizuală a pieselor**.
+
+Tabelul de mai jos arată corespondența dintre stările definite în Etapa 4 și implementarea lor efectivă în Etapa 5.
+
+| **Stare din Etapa 4** | **Implementare în Etapa 5** |
+|-----------------------|-----------------------------|
+| `ACQUIRE_IMAGE` | Utilizatorul introduce calea imaginii de test în `predict_piece.py` sau sunt citite imaginile din `data/train/` / `data/test/` pentru antrenare și evaluare |
+| `PREPROCESS` | Redimensionare 128×128, grayscale, normalizare la [0,1] — implementate în `data/importcv2.py` și refolosite în `predict_piece.py` |
+| `RN_INFERENCE` | Modelul **antrenat real** (`models/trained_model.h5`) este încărcat și folosit pentru `model.predict()` în `predict_piece.py` |
+| `THRESHOLD_CHECK` | Decizia Conformă/Defectă pe baza pragului `THRESHOLD` (0.5 sau 0.6); implementată în `predict_piece.py` |
+| `DISPLAY_RESULT` | Verdictul final + probabilitatea sunt afișate în UI (terminal), iar pentru demonstrativ se exportă screenshot în `docs/screenshots/inference_real.png` |
+
+### Implementarea în `predict_piece.py` (UI)
+În Etapa 5, scriptul `predict_piece.py` folosește:
+
+1. **Modelul antrenat** (`models/trained_model.h5`), nu un model neantrenat.  
+2. **Preprocesarea identică** cu etapa de antrenare (`importcv2.py`).  
+3. **Flux complet integrat**:
+   - citește imaginea (ACQUIRE_IMAGE)  
+   - o preprocesează (PREPROCESS)  
+   - rulează inferența CNN (RN_INFERENCE)  
+   - aplică pragul de decizie (THRESHOLD_CHECK)  
+   - afișează verdictul (DISPLAY_RESULT)  
+
+Astfel, inferența din Etapa 5 este perfect aliniată cu State Machine-ul construit în Etapa 4.
+
+
 
 
