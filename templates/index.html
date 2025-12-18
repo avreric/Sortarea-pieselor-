@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inspectie roti dintate</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <div class="bg"></div>
+
+  <div class="container">
+    <header class="top">
+      <div class="brand">
+        <div class="logo">AI</div>
+        <div class="brandText">
+          <h1>Inspecție roți dințate</h1>
+          <p>Încărcare imagine → predicție model → prag reglabil fin (0.01).</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- LEFT -->
+      <section class="card">
+        <h2>Control</h2>
+
+        <form method="POST" enctype="multipart/form-data" class="form">
+          <!-- Upload custom -->
+          <div class="field">
+            <label>Imagine</label>
+
+            <input id="imageInput" class="fileInput" type="file" name="image" accept=".jpg,.jpeg,.png" required>
+
+            <div class="fileRow">
+              <label for="imageInput" class="fileBtn">
+                <span class="fileIcon">📷</span>
+                <span>Alege fișier</span>
+              </label>
+
+              <div class="fileName" id="fileName">Niciun fișier selectat</div>
+            </div>
+
+            <div class="subtle">Formate acceptate: .jpg / .png</div>
+          </div>
+
+          <!-- Threshold -->
+          <div class="field">
+            <label>Prag decizie</label>
+
+            <div class="thGrid">
+              <div class="thBox">
+                <span class="thLabel">Valoare</span>
+                <input id="thresholdNumber"
+                       class="thNumber"
+                       type="number"
+                       name="threshold"
+                       min="0.01" max="0.99" step="0.01"
+                       value="{{ threshold }}"
+                       inputmode="decimal">
+              </div>
+
+              <div class="thBox">
+                <span class="thLabel">Live</span>
+                <div class="thLive"><span id="thText">{{ threshold }}</span></div>
+              </div>
+            </div>
+
+            <input id="thresholdSlider"
+                   class="thSlider"
+                   type="range"
+                   min="0.01" max="0.99" step="0.01"
+                   value="{{ threshold }}">
+
+            <div class="subtle">
+              Prag mai mic = mai sensibil (mai puține defecte ratate, dar pot crește alarmele false).
+            </div>
+          </div>
+
+          <button class="primary" type="submit">
+            Analizează
+          </button>
+        </form>
+
+        {% if error %}
+          <div class="alert error">{{ error }}</div>
+        {% endif %}
+      </section>
+
+      <!-- RIGHT -->
+      <section class="card">
+        <h2>Preview</h2>
+
+        <!-- Preview frame mai mic & uniform -->
+        <div class="preview preview--compact">
+          <div id="previewEmpty" class="previewEmpty">
+            Selectează o imagine pentru preview.
+          </div>
+          <img id="previewImg" class="previewImg" alt="Imagine încărcată">
+        </div>
+
+        <div class="meta" id="fileMeta"></div>
+
+        {% if result %}
+          <div class="result">
+            <div class="resultHeader">
+              <div class="badge {% if result == 'DEFECTĂ' %}bad{% else %}good{% endif %}">
+                {{ result }}
+              </div>
+              <div class="prob">
+                Prob defect: <b>{{ (prob_defect * 100) | round(2) }}%</b>
+              </div>
+            </div>
+
+            <div class="bar">
+              <div class="barFill" style="width: {{ (prob_defect * 100) | round(2) }}%;"></div>
+            </div>
+
+            <div class="note">
+              Prag folosit: <b>{{ threshold }}</b> • Log automat în <b>results/</b>
+            </div>
+          </div>
+        {% endif %}
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // LIVE SYNC: slider <-> number
+    const slider = document.getElementById("thresholdSlider");
+    const number = document.getElementById("thresholdNumber");
+    const thText = document.getElementById("thText");
+
+    function clamp(v){
+      v = Number(v);
+      if (Number.isNaN(v)) return 0.60;
+      if (v < 0.01) return 0.01;
+      if (v > 0.99) return 0.99;
+      return Number(v.toFixed(2));
+    }
+
+    function sync(v){
+      const val = clamp(v);
+      slider.value = val;
+      number.value = val.toFixed(2);
+      if (thText) thText.textContent = val.toFixed(2);
+    }
+
+    sync(number.value);
+    slider.addEventListener("input", () => sync(slider.value));
+    number.addEventListener("input", () => sync(number.value));
+    number.addEventListener("blur",  () => sync(number.value));
+
+    // Custom file button + preview
+    const input = document.getElementById("imageInput");
+    const img = document.getElementById("previewImg");
+    const empty = document.getElementById("previewEmpty");
+    const fileName = document.getElementById("fileName");
+    const meta = document.getElementById("fileMeta");
+
+    img.style.display = "none";
+
+    input.addEventListener("change", () => {
+      const file = input.files && input.files[0];
+
+      if (!file) {
+        img.removeAttribute("src");
+        img.style.display = "none";
+        empty.style.display = "grid";
+        fileName.textContent = "Niciun fișier selectat";
+        meta.textContent = "";
+        return;
+      }
+
+      fileName.textContent = file.name;
+
+      const url = URL.createObjectURL(file);
+      img.src = url;
+      img.style.display = "block";
+      empty.style.display = "none";
+
+      const sizeKB = Math.round(file.size / 1024);
+      meta.textContent = `Fișier: ${file.name} • ${sizeKB} KB`;
+    });
+  </script>
+</body>
+</html>
