@@ -1,0 +1,4 @@
+filename=gear1.jpg
+prob_defect=0.336085
+threshold=0.300000
+verdict=DEFECTĂ

@@ -1,0 +1,4 @@
+filename=piesa2.jpg
+prob_defect=0.394355
+threshold=0.300000
+verdict=DEFECTĂ

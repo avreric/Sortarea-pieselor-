@@ -1,0 +1,4 @@
+filename=piese conforme_gear1.jpg
+prob_defect=0.336931
+threshold=0.320000
+verdict=DEFECTĂ
