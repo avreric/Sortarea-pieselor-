@@ -1,0 +1,14 @@
+{
+    "model_evaluat": "model_inspectie_roti_dintate.h5",
+    "prag_decizie": 0.6,
+    "test_accuracy": 0.7143,
+    "f1_score_defect": 0.5,
+    "false_negative_rate": 0.6667,
+    "total_test_samples": 7,
+    "confusion_matrix": {
+        "piese_bune_corecte": 4,
+        "defecte_ratate": 2,
+        "defecte_corecte": 1,
+        "alarme_false": 0
+    }
+}

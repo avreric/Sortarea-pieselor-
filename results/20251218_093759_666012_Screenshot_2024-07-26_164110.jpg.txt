@@ -1,0 +1,4 @@
+filename=Screenshot 2024-07-26 164110.jpg
+prob_defect=0.444690
+threshold=0.410000
+verdict=DEFECTĂ
