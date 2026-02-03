@@ -1,0 +1,4 @@
+filename=piesadefecta4.png
+prob_defect=0.397542
+threshold=0.410000
+verdict=CONFORMĂ

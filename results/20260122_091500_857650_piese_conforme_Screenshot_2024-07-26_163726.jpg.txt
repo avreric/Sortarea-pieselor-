@@ -1,0 +1,4 @@
+filename=piese conforme_Screenshot 2024-07-26 163726.jpg
+prob_defect=0.291088
+threshold=0.400000
+verdict=CONFORMĂ

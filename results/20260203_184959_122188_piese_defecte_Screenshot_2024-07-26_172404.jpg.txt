@@ -1,0 +1,4 @@
+filename=piese defecte_Screenshot 2024-07-26 172404.jpg
+prob_defect=0.451350
+threshold=0.500000
+verdict=CONFORMĂ
